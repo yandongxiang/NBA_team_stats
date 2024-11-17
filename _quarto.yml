@@ -6,11 +6,11 @@ execute:
   echo: true
 
 book:
-  title: "YOUR PROJECT TITLE"
+  title: "NBA Team Stats Visualization"
   author:
-    - AUTHOR1 (UNI1)
-    - AUTHOR2 (UNI2)
-  repo-url: https://github.com/YOUR_GITHUB_ACCOUNT/REPO_NAME
+    - Yandong Xiang (yx2934)
+    - Yunfei Ke (yk3108)
+  repo-url: https://github.com/yandongxiang/NBA_team_stats
   date: today
   page-footer:
     right: |
