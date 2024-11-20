@@ -21,6 +21,19 @@
     "href": "data.html#missing-value-analysis",
     "title": "2  Data",
     "section": "2.2 Missing value analysis",
-    "text": "2.2 Missing value analysis"
+    "text": "2.2 Missing value analysis\nThere is no missing value in both data as the following two graphs show.\n\n\nCode\nlibrary(naniar)\nplayers_data_2023_2024 &lt;- read.csv(\"data/NBA_players_2023-2024csv.csv\")\nvis_miss(players_data_2023_2024)\n\n\n\n\n\n\n\n\n\nIt shows there is no missing value in the data of NBA players.\n\n\nCode\nlibrary(naniar)\nteam_data_2023_2024 &lt;- read.csv(\"data/NBA_team_2023-2024csv.csv\")\nvis_miss(team_data_2023_2024)\n\n\n\n\n\n\n\n\n\nIt shows there is no missing value in the data of NBA teams.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
+    ]
+  },
+  {
+    "objectID": "data.html",
+    "href": "data.html",
+    "title": "2  Data",
+    "section": "",
+    "text": "2.1 Description\nThe data we use is provided from National Basketball Association (NBA). All the data is from NBA official, and the data is publicly available and can be accessed at the following URL: https://www.nba.com/stats. From the website, we mainly use the basic stats of every NBA teams and every NBA plyers.\nThe data of NBA teams have attributes like the number of wins and losses games in this season, average scores per game, average minutes played per game, and son on. It has 26 attributes and there are total 30 teams. The data of NBA players have about 500 players and 26 attributes like number of wins and losses games in this season, average scores per game, and so on. The attributes of two data are the same.\nThe data is update daily in the current seasons and the data of previous season will not be updated. Since the data is publicly available, we directly copy the stats from the website. The precise links of two data are https://www.nba.com/stats/players/traditional?Season=2023-24 and https://www.nba.com/stats/teams/traditional?Season=2023-24.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
+    ]
   }
 ]
