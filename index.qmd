@@ -1,1 +1,16 @@
 # Introduction
+
+  We chose this topic because we were both engaged in basketball as a kid.
+Discussions about favorite basketball teams and players always circle around
+NBA, about who is the best NBA basketball player or which team is the best
+basketball team. We also want to do statistical analysis and visualization of
+the play stlyes of different teams, and analyze what feature likely tell us
+that a team or player is considered good or better.
+
+  In case if you never played basketball or never watched NBA, NBA stands for 
+National Basketball Association, it has 30 teams in total. 29 of the NBA teams
+are from USA and one team from Canada. The 30 teams are then divided into two
+different conferences. What we will look at is the data for the regular season,
+which starts in October and ends in mid-April. There will be 82 games in total.
+Teams will be ranked by their performance and only the top ranking teams are
+allowed to enter playoffs.
