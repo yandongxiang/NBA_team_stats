@@ -4,10 +4,221 @@
   * {
     font-family: sans-serif;
   }
-</style> 
+</style>
 
 <div id="plot">
+<h2>Team Win Rate Correlation Analysis</h2>
+<label for="selector">X Variable: </label>
+  <select id="selector">
+    <option value="3P%">3-Point Accuracy</option>
+    <option value="FG%">Field Goals Accuracy</option>
+    <option value="PTS">Points</option>
+    <option value="REB">Rebounds</option>
+    <option value="TOV">Turnovers</option>
+  </select>
+  <svg id="teamswinrate" width="800" height="500"></svg>
+<h2>Player Shooting Analysis</h2>
+<label for="players-selector">Analyzed Variable: </label>
+  <select id="players-selector">
+    <option value="3PA">3-Point</option>
+    <option value="FGA">Field Goals</option>
+  </select>
+  <svg id="players-scatterplot" width="800" height="500"></svg>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="scripts/myscript.js"></script>
+
+<script>
+  const teamsDataPath = "https://raw.githubusercontent.com/yandongxiang/NBA_team_stats/main/data/NBA_team_2023-2024csv.csv";
+  
+  d3.csv(teamsDataPath)
+    .then(data => {
+      console.log("Loaded Data:", data);
+  
+      data.forEach(d => {
+        d["Team"] = d["Team"];
+        d["WIN%"] = +d["WIN%"]*100;
+        d["3P%"] = +d["3P%"];
+        d["FG%"] = +d["FG%"];
+        d["PTS"] = +d["PTS"];
+        d["REB"] = +d["REB"];
+        d["TOV"] = +d["TOV"];
+      });
+  
+      const svg = d3.select("#teamswinrate"),
+            margin = { top: 20, right: 30, bottom: 50, left: 60 },
+            width = svg.attr("width") - margin.left - margin.right,
+            height = svg.attr("height") - margin.top - margin.bottom;
+  
+      const chart = svg.append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+  
+      const xLabel = svg.append("text")
+        .attr("id", "x-axis-label")
+        .attr("transform", `translate(${width / 2 + margin.left},${height + margin.top + 40})`)
+        .style("text-anchor", "middle")
+        .text("3P%");
+  
+      svg.append("text")
+        .attr("transform", `rotate(-90)`)
+        .attr("x", -(height / 2) - margin.top)
+        .attr("y", 15)
+        .style("text-anchor", "middle")
+        .text("Win Rate");
+  
+      const xScale = d3.scaleLinear().range([0, width]);
+      const yScale = d3.scaleLinear().range([height, 0]);
+  
+      chart.append("g").attr("class", "x-axis").attr("transform", `translate(0,${height})`);
+      chart.append("g").attr("class", "y-axis");
+  
+      const tooltip = d3.select("#plot")
+        .append("div")
+        .style("position", "absolute")
+        .style("background-color", "white")
+        .style("border", "1px solid #ccc")
+        .style("padding", "5px")
+        .style("border-radius", "5px")
+        .style("box-shadow", "0px 0px 5px rgba(0,0,0,0.2)")
+        .style("visibility", "hidden");
+  
+      const updatePlot = (xVariable) => {
+        xScale.domain(d3.extent(data, d => d[xVariable])).nice();
+        yScale.domain([0, d3.max(data, d => d["WIN%"])]).nice();
+  
+        chart.select(".x-axis").call(d3.axisBottom(xScale));
+        chart.select(".y-axis").call(d3.axisLeft(yScale));
+  
+        const circles = chart.selectAll("circle").data(data);
+  
+        circles.enter().append("circle")
+          .attr("r", 5)
+          .attr("fill", "steelblue")
+          .merge(circles)
+          .on("mouseover", (event, d) => {
+            tooltip.style("visibility", "visible")
+              .html(`<strong>${d["Team"]}</strong><br>${xVariable}: ${d[xVariable]}<br>Win%: ${d["WIN%"]}`)
+              .style("left", `${event.pageX + 10}px`)
+              .style("top", `${event.pageY + 10}px`);
+          })
+          .on("mousemove", (event) => {
+            tooltip.style("left", `${event.pageX + 10}px`)
+              .style("top", `${event.pageY + 10}px`);
+          })
+          .on("mouseout", () => {
+            tooltip.style("visibility", "hidden");
+          })
+          .transition().duration(500)
+          .attr("cx", d => xScale(d[xVariable]))
+          .attr("cy", d => yScale(d["WIN%"]));
+  
+        circles.exit().remove();
+  
+        xLabel.text(xVariable);
+      };
+  
+      d3.select("#selector").on("change", function() {
+        updatePlot(this.value);
+      });
+  
+      updatePlot("3P%");
+    })
+    
+  const playersDataPath = "https://raw.githubusercontent.com/yandongxiang/NBA_team_stats/main/data/NBA_players_2023-2024csv.csv";
+  
+  d3.csv(playersDataPath)
+    .then(data => {
+      console.log("Loaded Player Data:", data);
+  
+      data.forEach(d => {
+        d["Player"] = d["Player"];
+        d["3PA"] = +d["3PA"];
+        d["3P%"] = +d["3P%"];
+        d["FGA"] = +d["FGA"];
+        d["FG%"] = +d["FG%"];
+      });
+  
+      const svg = d3.select("#players-scatterplot"),
+            margin = { top: 20, right: 30, bottom: 50, left: 60 },
+            width = svg.attr("width") - margin.left - margin.right,
+            height = svg.attr("height") - margin.top - margin.bottom;
+  
+      const chart = svg.append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+  
+      const xLabel = svg.append("text")
+        .attr("id", "x-axis-label")
+        .attr("transform", `translate(${width / 2 + margin.left},${height + margin.top + 40})`)
+        .style("text-anchor", "middle")
+        .text("3PA (3-Point Attempts)");
+  
+      svg.append("text")
+        .attr("transform", `rotate(-90)`)
+        .attr("x", -(height / 2) - margin.top)
+        .attr("y", 15)
+        .style("text-anchor", "middle")
+        .text("Shooting Accuracy");
+  
+      const xScale = d3.scaleLinear().range([0, width]);
+      const yScale = d3.scaleLinear().range([height, 0]);
+  
+      chart.append("g").attr("class", "x-axis").attr("transform", `translate(0,${height})`);
+      chart.append("g").attr("class", "y-axis");
+  
+      const tooltip = d3.select("#plot")
+        .append("div")
+        .style("position", "absolute")
+        .style("background-color", "white")
+        .style("border", "1px solid #ccc")
+        .style("padding", "5px")
+        .style("border-radius", "5px")
+        .style("box-shadow", "0px 0px 5px rgba(0,0,0,0.2)")
+        .style("visibility", "hidden");
+  
+      const updatePlot = (xVariable) => {
+        const yVariable = xVariable === "3PA" ? "3P%" : "FG%";
+  
+        xScale.domain(d3.extent(data, d => d[xVariable])).nice();
+        yScale.domain([0, d3.max(data, d => d[yVariable])]).nice();
+  
+        chart.select(".x-axis").call(d3.axisBottom(xScale));
+        chart.select(".y-axis").call(d3.axisLeft(yScale));
+  
+        const circles = chart.selectAll("circle").data(data);
+  
+        circles.enter().append("circle")
+          .attr("r", 4)
+          .attr("opacity", 0.5)
+          .attr("fill", "steelblue")
+          .merge(circles)
+          .on("mouseover", (event, d) => {
+            tooltip.style("visibility", "visible")
+              .html(`<strong>${d["Player"]}</strong><br>${xVariable}: ${d[xVariable]}<br>${yVariable}: ${d[yVariable]}`)
+              .style("left", `${event.pageX + 10}px`)
+              .style("top", `${event.pageY + 10}px`);
+          })
+          .on("mousemove", (event) => {
+            tooltip.style("left", `${event.pageX + 10}px`)
+              .style("top", `${event.pageY + 10}px`);
+          })
+          .on("mouseout", () => {
+            tooltip.style("visibility", "hidden");
+          })
+          .transition().duration(500)
+          .attr("cx", d => xScale(d[xVariable]))
+          .attr("cy", d => yScale(d[yVariable]));
+  
+        circles.exit().remove();
+  
+        xLabel.text(xVariable === "3PA" ? "3-Point Attempts" : "Field Goal Attempts");
+      };
+  
+      d3.select("#players-selector").on("change", function() {
+        updatePlot(this.value);
+      });
+  
+      updatePlot("3PA");
+    })    
+
+</script>

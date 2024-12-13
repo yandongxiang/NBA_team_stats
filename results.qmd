@@ -1,1 +1,97 @@
 # Results
+
+```{R}
+#| message: false
+
+library(plotly)
+library(ggplot2)
+library(dplyr)
+library(forcats)
+
+players <- read.csv("data/NBA_players_2023-2024csv.csv")
+teams <- read.csv("data/NBA_team_2023-2024csv.csv")
+```
+
+```{R}
+plot_ly(
+  data = players,
+  x = ~`X3PM`,
+  y = ~`FGM`,
+  z = ~`FP`,
+  hoverinfo = 'text',
+  text = ~paste(
+    "Player: ", players$Player,
+    "<br>3-Point Made: ", `X3PM`,
+    "<br>Field Goals Made: ", `FGM`,
+    "<br>Fantasy Point: ", `FP`
+  ),
+  mode = "markers",
+  marker = list(size = 2)
+  ) |>
+    add_markers() |>
+    layout(
+      title = "Correlation between Shooting Percentages and Fantasy Point",
+      scene = list(
+        xaxis = list(title = "3-Point Made"),
+        yaxis = list(title = "Field Goals Made"),
+        zaxis = list(title = "Fantasy Point")
+      )
+    )
+```
+
+```{R}
+team_mapping <- data.frame(
+  TeamAbbreviation = c("PHI", "DAL", "MIL", "OKC", "NYK", "PHX", "BOS", "CLE", "SAC", "GSW", 
+                       "DEN", "MIN", "ATL", "LAL", "MEM", "CHI", "CHA", "LAC", "UTA", "NOP", 
+                       "DET", "POR", "ORL", "BKN", "WAS", "IND", "SAS", "HOU", "MIA", "TOR"),
+  TeamFullName = c("Philadelphia 76ers", "Dallas Mavericks", "Milwaukee Bucks", "Oklahoma City Thunder",
+                   "New York Knicks", "Phoenix Suns", "Boston Celtics", "Cleveland Cavaliers", 
+                   "Sacramento Kings", "Golden State Warriors", "Denver Nuggets", "Minnesota Timberwolves", 
+                   "Atlanta Hawks", "Los Angeles Lakers", "Memphis Grizzlies", "Chicago Bulls", 
+                   "Charlotte Hornets", "LA Clippers", "Utah Jazz", "New Orleans Pelicans", "Detroit Pistons", 
+                   "Portland Trail Blazers", "Orlando Magic", "Brooklyn Nets", "Washington Wizards", 
+                   "Indiana Pacers", "San Antonio Spurs", "Houston Rockets", "Miami Heat", "Toronto Raptors")
+)
+players_with_fullnames <- merge(players, team_mapping, 
+                                by.x = "Team", by.y = "TeamAbbreviation", all.x = TRUE)
+
+players_with_wins <- merge(players_with_fullnames, teams[, c("Team", "WIN.")], 
+                           by.x = "TeamFullName", by.y = "Team", all.x = TRUE)
+
+players_with_wins <- players_with_wins |>
+  mutate(Team = fct_reorder(Team, WIN., .desc = TRUE))
+
+ggplot(players_with_wins, aes(x = Team, y = PTS)) +
+  geom_boxplot(color = "black", alpha = 0.7) +
+  labs(
+    title = "Distribution of Points by Team Ranked by Win Rate",
+    x = "Team",
+    y = "Points"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(hjust = 0.5)
+  )
+```
+
+```{R}
+ggplot(players, aes(x = FGA / Min)) +
+  geom_density(aes(fill = "FGA/Min"), alpha = 0.5, color = "blue") +
+  geom_density(aes(x = X3PA / Min, fill = "X3PA/Min"), alpha = 0.5, color = "red") +
+  labs(
+    title = "Distribution of Field Goals and 3-Points Attempted Per Minute",
+    x = "Attempts Per Minute",
+    y = "Density",
+    fill = "Metrics"
+  ) +
+  scale_fill_manual(
+    values = c("FGA/Min" = "blue", "X3PA/Min" = "red"),
+    labels = c("FGA/Min" = "Field Goals Attempted", "X3PA/Min" = "3-Points Attempted")
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "top"
+  )
+```

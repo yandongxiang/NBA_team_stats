@@ -35,5 +35,25 @@
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
     ]
+  },
+  {
+    "objectID": "d3graph.html",
+    "href": "d3graph.html",
+    "title": "4  Interactive graph",
+    "section": "",
+    "text": "Team Win Rate Correlation Analysis\n\nX Variable:   3-Point Accuracy Field Goals Accuracy Points Rebounds Turnovers  \n\nPlayer Shooting Analysis\n\nAnalyzed Variable:   3-Point Field Goals",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Interactive graph</span>"
+    ]
+  },
+  {
+    "objectID": "results.html",
+    "href": "results.html",
+    "title": "3  Results",
+    "section": "",
+    "text": "Code\nlibrary(plotly)\nlibrary(ggplot2)\nlibrary(dplyr)\nlibrary(forcats)\n\nplayers &lt;- read.csv(\"data/NBA_players_2023-2024csv.csv\")\nteams &lt;- read.csv(\"data/NBA_team_2023-2024csv.csv\")\n\n\n\n\nCode\nplot_ly(\n  data = players,\n  x = ~`X3PM`,\n  y = ~`FGM`,\n  z = ~`FP`,\n  hoverinfo = 'text',\n  text = ~paste(\n    \"Player: \", players$Player,\n    \"&lt;br&gt;3-Point Made: \", `X3PM`,\n    \"&lt;br&gt;Field Goals Made: \", `FGM`,\n    \"&lt;br&gt;Fantasy Point: \", `FP`\n  ),\n  mode = \"markers\",\n  marker = list(size = 2)\n  ) |&gt;\n    add_markers() |&gt;\n    layout(\n      title = \"Correlation between Shooting Percentages and Fantasy Point\",\n      scene = list(\n        xaxis = list(title = \"3-Point Made\"),\n        yaxis = list(title = \"Field Goals Made\"),\n        zaxis = list(title = \"Fantasy Point\")\n      )\n    )\n\n\n\n\n\n\n\n\nCode\nteam_mapping &lt;- data.frame(\n  TeamAbbreviation = c(\"PHI\", \"DAL\", \"MIL\", \"OKC\", \"NYK\", \"PHX\", \"BOS\", \"CLE\", \"SAC\", \"GSW\", \n                       \"DEN\", \"MIN\", \"ATL\", \"LAL\", \"MEM\", \"CHI\", \"CHA\", \"LAC\", \"UTA\", \"NOP\", \n                       \"DET\", \"POR\", \"ORL\", \"BKN\", \"WAS\", \"IND\", \"SAS\", \"HOU\", \"MIA\", \"TOR\"),\n  TeamFullName = c(\"Philadelphia 76ers\", \"Dallas Mavericks\", \"Milwaukee Bucks\", \"Oklahoma City Thunder\",\n                   \"New York Knicks\", \"Phoenix Suns\", \"Boston Celtics\", \"Cleveland Cavaliers\", \n                   \"Sacramento Kings\", \"Golden State Warriors\", \"Denver Nuggets\", \"Minnesota Timberwolves\", \n                   \"Atlanta Hawks\", \"Los Angeles Lakers\", \"Memphis Grizzlies\", \"Chicago Bulls\", \n                   \"Charlotte Hornets\", \"LA Clippers\", \"Utah Jazz\", \"New Orleans Pelicans\", \"Detroit Pistons\", \n                   \"Portland Trail Blazers\", \"Orlando Magic\", \"Brooklyn Nets\", \"Washington Wizards\", \n                   \"Indiana Pacers\", \"San Antonio Spurs\", \"Houston Rockets\", \"Miami Heat\", \"Toronto Raptors\")\n)\nplayers_with_fullnames &lt;- merge(players, team_mapping, \n                                by.x = \"Team\", by.y = \"TeamAbbreviation\", all.x = TRUE)\n\nplayers_with_wins &lt;- merge(players_with_fullnames, teams[, c(\"Team\", \"WIN.\")], \n                           by.x = \"TeamFullName\", by.y = \"Team\", all.x = TRUE)\n\nplayers_with_wins &lt;- players_with_wins |&gt;\n  mutate(Team = fct_reorder(Team, WIN., .desc = TRUE))\n\nggplot(players_with_wins, aes(x = Team, y = PTS)) +\n  geom_boxplot(color = \"black\", alpha = 0.7) +\n  labs(\n    title = \"Distribution of Points by Team Ranked by Win Rate\",\n    x = \"Team\",\n    y = \"Points\"\n  ) +\n  theme_minimal() +\n  theme(\n    axis.text.x = element_text(angle = 45, hjust = 1),\n    plot.title = element_text(hjust = 0.5)\n  )\n\n\n\n\n\n\n\n\n\n\n\nCode\nggplot(players, aes(x = FGA / Min)) +\n  geom_density(aes(fill = \"FGA/Min\"), alpha = 0.5, color = \"blue\") +\n  geom_density(aes(x = X3PA / Min, fill = \"X3PA/Min\"), alpha = 0.5, color = \"red\") +\n  labs(\n    title = \"Distribution of Field Goals and 3-Points Attempted Per Minute\",\n    x = \"Attempts Per Minute\",\n    y = \"Density\",\n    fill = \"Metrics\"\n  ) +\n  scale_fill_manual(\n    values = c(\"FGA/Min\" = \"blue\", \"X3PA/Min\" = \"red\"),\n    labels = c(\"FGA/Min\" = \"Field Goals Attempted\", \"X3PA/Min\" = \"3-Points Attempted\")\n  ) +\n  theme_minimal() +\n  theme(\n    plot.title = element_text(hjust = 0.5),\n    legend.position = \"top\"\n  )",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Results</span>"
+    ]
   }
 ]
