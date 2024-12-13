@@ -17,6 +17,9 @@
     <option value="TOV">Turnovers</option>
   </select>
   <svg id="teamswinrate" width="800" height="500"></svg>
+  <p>We plotted this graph in a way that we can observe the win rate of teams against seasonal average 3-point accuracy, field goal accuracy, points, rebounds, and turnovers. On the other hand, we also enabled a mouse-over effect on data points so that we can check whether basketball teams met the stereotypes.</p>
+  <p>While average 3-point accuracy, field goal accuracy, points, and rebounds positively correlate with the win rate, average turnovers negatively correlate with the win rate. Interestingly, we can observe that 3-point accuracy seems to have the strongest correlation with the win rate of basketball teams. We can also observe from the plot that there seems to be a cutoff at 36.5% in 3-point accuracy. The majority of the teams with a win rate greater than 50% have a 3-point accuracy above 36.5%, with the only exceptions being Magic and 76ers. All of the teams with a win rate equal to or below 50% have a 3-point accuracy below 36.5%. Then it comes to me: how come the Golden State Warriors, the team with the best 3-point shooter, ranked relatively low in terms of win rate? When hovering over the data, we can see that the Warriors actually have a lower 3-point accuracy on average as a team. Then it makes sense that Warriors have a much lower win rate compared to Celtics.</p>
+
 <h2>Player Shooting Analysis</h2>
 <label for="players-selector">Analyzed Variable: </label>
   <select id="players-selector">
@@ -24,6 +27,37 @@
     <option value="FGA">Field Goals</option>
   </select>
   <svg id="players-scatterplot" width="800" height="500"></svg>
+<div id="scatterplot">
+  <p>We plotted this graph in a way that we can observe the correlation between field goal accuracy and field goal attempts and the correlation between 3-point accuracy and 3-point attempts. On the other hand, we can hover our mouse over the plot to see which player the data point represents.</p>
+  <p>We can see that for players with high 3-point and field goal attempts, they don’t necessarily have higher 3-point and field goal accuracy compared to other players. Moreover, we cannot see much of a positive correlation between the attempted shots and the shooting accuracy of players. This leads us to a question: do some players gain more points and make more shots only because they are more risk-taking? That is a question that we cannot answer with existing data but is interesting to ponder and experiment about. Another observation we have is that players with low accuracy tend to attempt fewer shots. This is intuitive, if a player has a poor shot, they will be more reluctant to take the shot.</p>
+
+<h2>Relationship Between Top 2 Fantasy Points and Wins</h2>
+  <svg width="800" height="500"></svg>
+  <p>In this graph, I first found two players of each team who have the top 2 fantastic points in their team, and I want to see the relationship between the average fantasy points of top 2 players in each team and the num of winning games.
+
+It showed that generally, these two stats are positive correlated. This kind of makes sense since if their core players are better, their team tends to be better. However, we know that basketball is team sports. so there are some teams that has high fantasy points of their core players, but other player may not have a big role, which cannot make team win.</p>
+  
+  <h2>NBA Regular vs Playoff Comparison</h2>
+  <label for="selector2">Metric:</label>
+  <select id="selector2"></select>
+  <svg id="comparison-chart" width="800" height="500"></svg>
+  <p>Feature with significant difference: 
+  
+Double Double (DD2), Triple Double (TD3): Double Double means a player have and two of these stats points, rebounds, assists, and steals that over 10 in one game is a double double. Triple double means player should have any three of the stats over 10 in one game. We can see these two features show how all-around a player is. In the graph we can clearly see that the average of DD2 and TD3 is significantly decreased. This show that it is hard for player to achieve DD2 or TD3 in playoffs, which indicates the game in playoffs is more intense.
+
+Features with slight difference: 
+
+Turnovers (TOV): Players tend to have slightly higher turnovers during the Playoffs compared to the Regular Season. This is may because in playoffs, players have increased defensive pressure and the game is more intense than regular season.
+
+Points (PTS), Fantastic Point (FP): Average scoring is slightly lower during the Playoffs, which also shows players have increased defensive pressure and the game is more intense than regular season. Fantastic point is an indicator of how positive effect does a play have on the court. 
+
+Shooting Performance (FGA, FGM, FG., X3P., X3PA, X3PM): Regular Season shows higher field goal percentage (FG.) and three-point percentage (X3P.). However, the Playoffs we can see an decrease in shot attempts (FGA) and three-point attempts (X3PA) and the shooting percentage is also lower. This indicates increased defensive pressure in the Playoffs.
+
+Assists (AST), Rebounds (REB), Blocks (BLK), and Steals (STL): These features show a slight decrease from Regular to Playoff seasons, also give an insight that players the game is more intense.
+
+Free Throw Percentage (FT.): Regular Season shows higher Free Throw Percentage (FT.). Free throws really require precision, focus, and mental stability under pressure.Therefore, this difference is more intuitive to show that playoffs game is more intense and players are under more stressed and are more tired.</p>
+  
+  <div class="tooltip" id="tooltip"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
@@ -221,4 +255,255 @@
       updatePlot("3PA");
     })    
 
+  const dataPath = "https://raw.githubusercontent.com/yandongxiang/NBA_team_stats/refs/heads/main/data/team_data_fp.csv";
+
+  d3.csv(dataPath).then(data => {
+    // 转换数据为数字类型
+    data.forEach(d => {
+      d.avg_fp_top2 = +d.avg_fp_top2;
+      d.W = +d.W;
+    });
+
+    const svg = d3.select("#scatterplot svg"),
+          margin = { top: 20, right: 30, bottom: 70, left: 70 },
+          width = +svg.attr("width") - margin.left - margin.right,
+          height = +svg.attr("height") - margin.top - margin.bottom;
+
+    const chart = svg.append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // 设置缩放比例，并添加缓冲区
+    const xExtent = d3.extent(data, d => d.avg_fp_top2);
+    const yExtent = d3.extent(data, d => d.W);
+
+    const xScale = d3.scaleLinear()
+      .domain([xExtent[0] - (xExtent[1] - xExtent[0]) * 0.1, xExtent[1] + (xExtent[1] - xExtent[0]) * 0.1]) // 添加 10% 缓冲区
+      .range([0, width]);
+
+    const yScale = d3.scaleLinear()
+      .domain([yExtent[0] - (yExtent[1] - yExtent[0]) * 0.1, yExtent[1] + (yExtent[1] - yExtent[0]) * 0.1]) // 添加 10% 缓冲区
+      .range([height, 0]);
+
+    // 添加轴
+    chart.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(xScale).ticks(10))
+      .selectAll("text")
+      .style("font-size", "14px");
+
+    chart.append("g")
+      .call(d3.axisLeft(yScale).ticks(10))
+      .selectAll("text")
+      .style("font-size", "14px");
+
+    // 添加轴标签
+    svg.append("text")
+      .attr("transform", `translate(${width / 2 + margin.left},${height + margin.top + 50})`)
+      .style("text-anchor", "middle")
+      .style("font-size", "16px")
+      .text("Average Fantasy Points (Top 2 Players)");
+
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x", -(height / 2) - margin.top)
+      .attr("y", 20)
+      .style("text-anchor", "middle")
+      .style("font-size", "16px")
+      .text("Number of Wins");
+
+    // 添加散点
+    const tooltip = d3.select("#scatterplot")
+      .append("div")
+      .style("position", "absolute")
+      .style("background-color", "white")
+      .style("border", "1px solid #ccc")
+      .style("padding", "5px")
+      .style("border-radius", "5px")
+      .style("box-shadow", "0px 0px 5px rgba(0,0,0,0.2)")
+      .style("visibility", "hidden");
+
+    chart.selectAll(".dot")
+      .data(data)
+      .enter().append("circle")
+      .attr("class", "dot")
+      .attr("cx", d => xScale(d.avg_fp_top2))
+      .attr("cy", d => yScale(d.W))
+      .attr("r", 5)
+      .attr("fill", "blue")
+      .attr("opacity", 0.7)
+      .on("mouseover", (event, d) => {
+        tooltip.style("visibility", "visible")
+          .html(`<strong>${d.Team}</strong><br>Wins: ${d.W}<br>Avg FP: ${d.avg_fp_top2}`)
+          .style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY + 10}px`);
+      })
+      .on("mousemove", (event) => {
+        tooltip.style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY + 10}px`);
+      })
+      .on("mouseout", () => {
+        tooltip.style("visibility", "hidden");
+      });
+
+    // 计算线性回归
+    const xMean = d3.mean(data, d => d.avg_fp_top2);
+    const yMean = d3.mean(data, d => d.W);
+    const slope = d3.sum(data, d => (d.avg_fp_top2 - xMean) * (d.W - yMean)) /
+                  d3.sum(data, d => Math.pow(d.avg_fp_top2 - xMean, 2));
+    const intercept = yMean - slope * xMean;
+
+    // 拟合曲线数据
+    const xFit = d3.extent(data, d => d.avg_fp_top2);
+    const yFit = xFit.map(x => slope * x + intercept);
+
+    // 绘制拟合曲线
+    chart.append("line")
+      .attr("x1", xScale(xFit[0]))
+      .attr("y1", yScale(yFit[0]))
+      .attr("x2", xScale(xFit[1]))
+      .attr("y2", yScale(yFit[1]))
+      .attr("stroke", "red")
+      .attr("stroke-width", 2);
+
+  }).catch(error => {
+    console.error("Error loading data:", error);
+  });
+  
+  // CSV 文件路径
+  const csvPath = "https://raw.githubusercontent.com/yandongxiang/NBA_team_stats/refs/heads/main/data/average_data.csv";
+
+  // 定义变量的全称和简写
+  const metricNames = {
+    "Min": "Minutes Played (Min)",
+    "PTS": "Points (PTS)",
+    "FGM": "Field Goals Made (FGM)",
+    "FGA": "Field Goals Attempted (FGA)",
+    "FG.": "Field Goal Percentage (FG%)",
+    "X3PM": "3-Point Field Goals Made (3PM)",
+    "X3PA": "3-Point Field Goals Attempted (3PA)",
+    "X3P.": "3-Point Field Goal Percentage (3P%)",
+    "FTM": "Free Throws Made (FTM)",
+    "FTA": "Free Throws Attempted (FTA)",
+    "FT.": "Free Throw Percentage (FT%)",
+    "OREB": "Offensive Rebounds (OREB)",
+    "DREB": "Defensive Rebounds (DREB)",
+    "REB": "Rebounds (REB)",
+    "AST": "Assists (AST)",
+    "TOV": "Turnovers (TOV)",
+    "STL": "Steals (STL)",
+    "BLK": "Blocks (BLK)",
+    "PF": "Personal Fouls (PF)",
+    "FP": "Fantasy Points (FP)",
+    "DD2": "Double Doubles (DD2)",
+    "TD3": "Triple Doubles (TD3)"
+  };
+
+  // 加载 CSV 数据
+  d3.csv(csvPath).then(data => {
+    // 格式化数据
+    data.forEach(d => {
+      d.value = +d.value; // 转换为数值类型
+    });
+
+    // 提取唯一的 Metric 列表
+    const metrics = [...new Set(data.map(d => d.Metric))];
+
+    // 填充下拉菜单
+    const selector = d3.select("#selector2");
+    selector.selectAll("option")
+      .data(metrics)
+      .enter()
+      .append("option")
+      .text(d => metricNames[d] || d) // 显示全称和简写
+      .attr("value", d => d);
+
+    // 绘制初始图表
+    updateChart(metrics[0]);
+
+    // 监听下拉框事件
+    selector.on("change", function() {
+      updateChart(this.value);
+    });
+
+    // 图表更新函数
+    function updateChart(selectedMetric) {
+      const filteredData = data.filter(d => d.Metric === selectedMetric);
+
+      // 图表边距
+      const margin = { top: 40, right: 20, bottom: 50, left: 50 };
+      const width = 800 - margin.left - margin.right;
+      const height = 500 - margin.top - margin.bottom;
+
+      // 创建 SVG 容器
+      const svg = d3.select("#comparison-chart")
+        .attr("width", 800)
+        .attr("height", 500);
+
+      svg.selectAll("*").remove(); // 清空之前的图表内容
+
+      const chart = svg.append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+      // 定义 X 轴和 Y 轴比例尺
+      const xScale = d3.scaleBand()
+        .domain(filteredData.map(d => d.Stage))
+        .range([0, width])
+        .padding(0.2);
+
+      const yScale = d3.scaleLinear()
+        .domain([0, d3.max(filteredData, d => d.value)])
+        .range([height, 0]);
+
+      // 绘制 X 轴
+      chart.append("g")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(xScale))
+        .selectAll("text")
+        .style("text-anchor", "middle");
+
+      // 绘制 Y 轴
+      chart.append("g")
+        .call(d3.axisLeft(yScale));
+
+      // 绘制柱状图
+      chart.selectAll(".bar")
+        .data(filteredData)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", d => xScale(d.Stage))
+        .attr("y", d => yScale(d.value))
+        .attr("width", xScale.bandwidth())
+        .attr("height", d => height - yScale(d.value))
+        .attr("fill", d => d.Stage === "Regular" ? "skyblue" : "orange") // 初始化颜色
+        .on("mouseover", function (event, d) {
+          
+
+          d3.select("#tooltip")
+            .style("visibility", "visible")
+            .html(`<strong>${d.Stage}</strong><br>Value: ${d.value.toFixed(2)}`);
+        })
+        .on("mousemove", event => {
+          d3.select("#tooltip")
+            .style("top", `${event.pageY + 10}px`)
+            .style("left", `${event.pageX + 10}px`);
+        })
+        .on("mouseout", function (event, d) {
+          d3.select(this) // 恢复柱子的初始颜色
+            .attr("fill", d.Stage === "Regular" ? "skyblue" : "orange");
+
+          d3.select("#tooltip").style("visibility", "hidden");
+        });
+
+      // 添加标题
+      svg.append("text")
+        .attr("x", width / 2 + margin.left)
+        .attr("y", margin.top / 2)
+        .attr("text-anchor", "middle")
+        .attr("class", "chart-title")
+        .text(metricNames[selectedMetric] || selectedMetric);
+    }
+  }).catch(error => {
+    console.error("Error loading or processing data:", error);
+  });
 </script>

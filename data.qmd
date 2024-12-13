@@ -3,7 +3,7 @@
 ## Description
 The data we use is provided from National Basketball Association (NBA). All the data is from NBA official,
 and the data is publicly available and can be accessed at the following URL: https://www.nba.com/stats. From
-the website, we mainly use the basic stats of every NBA teams and every NBA plyers.
+the website, we mainly use the basic stats of every NBA teams and every NBA players from season 2023-24.
 
 The data of NBA teams have attributes like the number of wins and losses games in this season, average scores per game, average minutes played per game, and son on. It has 26 attributes and there are total 30 teams. The data of NBA players have about 500 players and 26 attributes like number of wins and losses games in this season, average scores per game, and so on. The attributes of two data are the same.
 
