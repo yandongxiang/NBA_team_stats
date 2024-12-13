@@ -35,5 +35,15 @@
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Data</span>"
     ]
+  },
+  {
+    "objectID": "d3graph.html",
+    "href": "d3graph.html",
+    "title": "4  Interactive graph",
+    "section": "",
+    "text": "Relationship Between Top 2 Fantasy Points and Wins\n\n\n\nIn this graph, I first found two players of each team who have the top 2 fantastic points in their team, and I want to see the relationship between the average fantasy points of top 2 players in each team and the num of winning games.\nIt showed that generally, these two stats are positive correlated. This kind of makes sense since if their core players are better, their team tends to be better. However, we know that basketball is team sports. so there are some teams that has high fantasy points of their core players, but other player may not have a big role, which cannot make team win.\n\n\nNBA Regular vs Playoff Comparison\n\nMetric:  \n\nFeature with significant difference:\nDouble Double (DD2), Triple Double (TD3): Double Double means a player have and two of these stats points, rebounds, assists, and steals that over 10 in one game is a double double. Triple double means player should have any three of the stats over 10 in one game. We can see these two features show how all-around a player is. In the graph we can clearly see that the average of DD2 and TD3 is significantly decreased. This show that it is hard for player to achieve DD2 or TD3 in playoffs, which indicates the game in playoffs is more intense.\nFeatures with slight difference:\nTurnovers (TOV): Players tend to have slightly higher turnovers during the Playoffs compared to the Regular Season. This is may because in playoffs, players have increased defensive pressure and the game is more intense than regular season.\nPoints (PTS), Fantastic Point (FP): Average scoring is slightly lower during the Playoffs, which also shows players have increased defensive pressure and the game is more intense than regular season. Fantastic point is an indicator of how positive effect does a play have on the court.\nShooting Performance (FGA, FGM, FG., X3P., X3PA, X3PM): Regular Season shows higher field goal percentage (FG.) and three-point percentage (X3P.). However, the Playoffs we can see an decrease in shot attempts (FGA) and three-point attempts (X3PA) and the shooting percentage is also lower. This indicates increased defensive pressure in the Playoffs.\nAssists (AST), Rebounds (REB), Blocks (BLK), and Steals (STL): These features show a slight decrease from Regular to Playoff seasons, also give an insight that players the game is more intense.\nFree Throw Percentage (FT.): Regular Season shows higher Free Throw Percentage (FT.). Free throws really require precision, focus, and mental stability under pressure.Therefore, this difference is more intuitive to show that playoffs game is more intense and players are under more stressed and are more tired.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Interactive graph</span>"
+    ]
   }
 ]
