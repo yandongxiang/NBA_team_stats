@@ -1,0 +1,264 @@
+<div id="scatterplot">
+  <h2>Relationship Between Top 2 Fantasy Points and Wins</h2>
+  <svg width="800" height="500"></svg>
+  <h2>NBA Regular vs Playoff Comparison</h2>
+  <label for="selector">Metric:</label>
+  <select id="selector"></select>
+  <svg id="comparison-chart" width="800" height="500"></svg>
+  <div class="tooltip" id="tooltip"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script>
+  const dataPath = "team_data_fp.csv";
+
+  d3.csv(dataPath).then(data => {
+    // 转换数据为数字类型
+    data.forEach(d => {
+      d.avg_fp_top2 = +d.avg_fp_top2;
+      d.W = +d.W;
+    });
+
+    const svg = d3.select("#scatterplot svg"),
+          margin = { top: 20, right: 30, bottom: 70, left: 70 },
+          width = +svg.attr("width") - margin.left - margin.right,
+          height = +svg.attr("height") - margin.top - margin.bottom;
+
+    const chart = svg.append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // 设置缩放比例，并添加缓冲区
+    const xExtent = d3.extent(data, d => d.avg_fp_top2);
+    const yExtent = d3.extent(data, d => d.W);
+
+    const xScale = d3.scaleLinear()
+      .domain([xExtent[0] - (xExtent[1] - xExtent[0]) * 0.1, xExtent[1] + (xExtent[1] - xExtent[0]) * 0.1]) // 添加 10% 缓冲区
+      .range([0, width]);
+
+    const yScale = d3.scaleLinear()
+      .domain([yExtent[0] - (yExtent[1] - yExtent[0]) * 0.1, yExtent[1] + (yExtent[1] - yExtent[0]) * 0.1]) // 添加 10% 缓冲区
+      .range([height, 0]);
+
+    // 添加轴
+    chart.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(xScale).ticks(10))
+      .selectAll("text")
+      .style("font-size", "14px");
+
+    chart.append("g")
+      .call(d3.axisLeft(yScale).ticks(10))
+      .selectAll("text")
+      .style("font-size", "14px");
+
+    // 添加轴标签
+    svg.append("text")
+      .attr("transform", `translate(${width / 2 + margin.left},${height + margin.top + 50})`)
+      .style("text-anchor", "middle")
+      .style("font-size", "16px")
+      .text("Average Fantasy Points (Top 2 Players)");
+
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x", -(height / 2) - margin.top)
+      .attr("y", 20)
+      .style("text-anchor", "middle")
+      .style("font-size", "16px")
+      .text("Number of Wins");
+
+    // 添加散点
+    const tooltip = d3.select("#scatterplot")
+      .append("div")
+      .style("position", "absolute")
+      .style("background-color", "white")
+      .style("border", "1px solid #ccc")
+      .style("padding", "5px")
+      .style("border-radius", "5px")
+      .style("box-shadow", "0px 0px 5px rgba(0,0,0,0.2)")
+      .style("visibility", "hidden");
+
+    chart.selectAll(".dot")
+      .data(data)
+      .enter().append("circle")
+      .attr("class", "dot")
+      .attr("cx", d => xScale(d.avg_fp_top2))
+      .attr("cy", d => yScale(d.W))
+      .attr("r", 5)
+      .attr("fill", "blue")
+      .attr("opacity", 0.7)
+      .on("mouseover", (event, d) => {
+        tooltip.style("visibility", "visible")
+          .html(`<strong>${d.Team}</strong><br>Wins: ${d.W}<br>Avg FP: ${d.avg_fp_top2}`)
+          .style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY + 10}px`);
+      })
+      .on("mousemove", (event) => {
+        tooltip.style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY + 10}px`);
+      })
+      .on("mouseout", () => {
+        tooltip.style("visibility", "hidden");
+      });
+
+    // 计算线性回归
+    const xMean = d3.mean(data, d => d.avg_fp_top2);
+    const yMean = d3.mean(data, d => d.W);
+    const slope = d3.sum(data, d => (d.avg_fp_top2 - xMean) * (d.W - yMean)) /
+                  d3.sum(data, d => Math.pow(d.avg_fp_top2 - xMean, 2));
+    const intercept = yMean - slope * xMean;
+
+    // 拟合曲线数据
+    const xFit = d3.extent(data, d => d.avg_fp_top2);
+    const yFit = xFit.map(x => slope * x + intercept);
+
+    // 绘制拟合曲线
+    chart.append("line")
+      .attr("x1", xScale(xFit[0]))
+      .attr("y1", yScale(yFit[0]))
+      .attr("x2", xScale(xFit[1]))
+      .attr("y2", yScale(yFit[1]))
+      .attr("stroke", "red")
+      .attr("stroke-width", 2);
+
+  }).catch(error => {
+    console.error("Error loading data:", error);
+  });
+  
+  // CSV 文件路径
+  const csvPath = "average_data.csv";
+
+  // 定义变量的全称和简写
+  const metricNames = {
+    "Min": "Minutes Played (Min)",
+    "PTS": "Points (PTS)",
+    "FGM": "Field Goals Made (FGM)",
+    "FGA": "Field Goals Attempted (FGA)",
+    "FG.": "Field Goal Percentage (FG%)",
+    "X3PM": "3-Point Field Goals Made (3PM)",
+    "X3PA": "3-Point Field Goals Attempted (3PA)",
+    "X3P.": "3-Point Field Goal Percentage (3P%)",
+    "FTM": "Free Throws Made (FTM)",
+    "FTA": "Free Throws Attempted (FTA)",
+    "FT.": "Free Throw Percentage (FT%)",
+    "OREB": "Offensive Rebounds (OREB)",
+    "DREB": "Defensive Rebounds (DREB)",
+    "REB": "Rebounds (REB)",
+    "AST": "Assists (AST)",
+    "TOV": "Turnovers (TOV)",
+    "STL": "Steals (STL)",
+    "BLK": "Blocks (BLK)",
+    "PF": "Personal Fouls (PF)",
+    "FP": "Fantasy Points (FP)",
+    "DD2": "Double Doubles (DD2)",
+    "TD3": "Triple Doubles (TD3)"
+  };
+
+  // 加载 CSV 数据
+  d3.csv(csvPath).then(data => {
+    // 格式化数据
+    data.forEach(d => {
+      d.value = +d.value; // 转换为数值类型
+    });
+
+    // 提取唯一的 Metric 列表
+    const metrics = [...new Set(data.map(d => d.Metric))];
+
+    // 填充下拉菜单
+    const selector = d3.select("#selector");
+    selector.selectAll("option")
+      .data(metrics)
+      .enter()
+      .append("option")
+      .text(d => metricNames[d] || d) // 显示全称和简写
+      .attr("value", d => d);
+
+    // 绘制初始图表
+    updateChart(metrics[0]);
+
+    // 监听下拉框事件
+    selector.on("change", function() {
+      updateChart(this.value);
+    });
+
+    // 图表更新函数
+    function updateChart(selectedMetric) {
+      const filteredData = data.filter(d => d.Metric === selectedMetric);
+
+      // 图表边距
+      const margin = { top: 40, right: 20, bottom: 50, left: 50 };
+      const width = 800 - margin.left - margin.right;
+      const height = 500 - margin.top - margin.bottom;
+
+      // 创建 SVG 容器
+      const svg = d3.select("#comparison-chart")
+        .attr("width", 800)
+        .attr("height", 500);
+
+      svg.selectAll("*").remove(); // 清空之前的图表内容
+
+      const chart = svg.append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+      // 定义 X 轴和 Y 轴比例尺
+      const xScale = d3.scaleBand()
+        .domain(filteredData.map(d => d.Stage))
+        .range([0, width])
+        .padding(0.2);
+
+      const yScale = d3.scaleLinear()
+        .domain([0, d3.max(filteredData, d => d.value)])
+        .range([height, 0]);
+
+      // 绘制 X 轴
+      chart.append("g")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(xScale))
+        .selectAll("text")
+        .style("text-anchor", "middle");
+
+      // 绘制 Y 轴
+      chart.append("g")
+        .call(d3.axisLeft(yScale));
+
+      // 绘制柱状图
+      chart.selectAll(".bar")
+        .data(filteredData)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", d => xScale(d.Stage))
+        .attr("y", d => yScale(d.value))
+        .attr("width", xScale.bandwidth())
+        .attr("height", d => height - yScale(d.value))
+        .attr("fill", d => d.Stage === "Regular" ? "skyblue" : "orange") // 初始化颜色
+        .on("mouseover", function (event, d) {
+          
+
+          d3.select("#tooltip")
+            .style("visibility", "visible")
+            .html(`<strong>${d.Stage}</strong><br>Value: ${d.value.toFixed(2)}`);
+        })
+        .on("mousemove", event => {
+          d3.select("#tooltip")
+            .style("top", `${event.pageY + 10}px`)
+            .style("left", `${event.pageX + 10}px`);
+        })
+        .on("mouseout", function (event, d) {
+          d3.select(this) // 恢复柱子的初始颜色
+            .attr("fill", d.Stage === "Regular" ? "skyblue" : "orange");
+
+          d3.select("#tooltip").style("visibility", "hidden");
+        });
+
+      // 添加标题
+      svg.append("text")
+        .attr("x", width / 2 + margin.left)
+        .attr("y", margin.top / 2)
+        .attr("text-anchor", "middle")
+        .attr("class", "chart-title")
+        .text(metricNames[selectedMetric] || selectedMetric);
+    }
+  }).catch(error => {
+    console.error("Error loading or processing data:", error);
+  });
+</script>
