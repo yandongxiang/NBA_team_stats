@@ -1,1 +1,25 @@
 # Conclusion
+
+Here are some key conclusions in our analysis:
+1. Regular Season vs Playoff Season
+From our analysis, the stats indicate that playoff games are more intense and players are under more pressure so they did not have the same good performance as in regular season.
+
+2. West conference vs East conference
+Generally, team in West perform better than team in East. Interestingly, we found out there is a significant outlier in East team. What We found out is that Boston Celtics is the "outlier". It shows a way better performance among East teams. Moreover, who is the champion this year? Boston Celtics! This makes us think the question: Is a team more likely to win a championship in a relatively less competitive conference? This question needs more data and further investigation.
+
+3.Relationship Between Core players performance and Wins
+Generally, these two are positive correlated. It show that if their core players perform well, their team tends to win more. However, we know that basketball is a team sports. So there are some teams that core players performing well, but other players may not have a consistently good impact, which cannot lead their team win. 
+
+4. Style
+From our graph, we can clearly see different styles in these teams. For instance, Golden State Warriors has high-risk but high-reward offensive strategy and they mainly do the offence by three-point shooting. Philadelphia 76ers they focus more on defense and try to play very physically to get free throws.
+
+5.Team Win Rate Correlation
+Interestingly, we can observe that 3-point accuracy seems to have the strongest correlation with the win rate of basketball teams. Then it comes to me: how come the Golden State Warriors, the team with the best 3-point shooter, Stephen Curry, ranked relatively low in terms of win rate? When checking the data, we can see that the Warriors actually have a lower 3-point accuracy on average as a team. Then it makes sense that Warriors have a much lower win rate compared to Celtics.
+
+6.Player Shooting 
+For players with high 3-point and field goal attempts, they don’t necessarily have higher 3-point and field goal accuracy compared to other players. Moreover, we cannot see much of a positive correlation between the attempted shots and the shooting accuracy of players. This leads us to a question: do some players gain more points and make more shots only because they are more risk-taking? That is a question that we cannot answer with existing data but is interesting experiment about.
+
+7.Shot Attempted 
+We can see that some players are attempting more shots per minute than others. For the 3-point attempts per minute, some players, such as power forwards and centers, have fewer opportunities to shoot 3-pointers. It is also interesting to observe that the peak of the field goal attempts distribution is only about twice the peak of the 3-point attempts distribution, which indicates that about half of the field goal attempts are 3-pointers.
+
+Overall, we have some interesting findings. NBA is an association for basketball with highest-level around the world and being a champion of it is really hard. Does your team need to make more three-point attempt? What style is your team trying to build? How good are your core players? What should be prepared for playoffs? These are all important questions for a NBA team.

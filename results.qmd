@@ -122,6 +122,8 @@ For the 3-point attempts per minute, we can see that the distribution is bimodal
 Overall, it is also interesting to observe that the peak of the field goal attempts distribution is only about twice the peak of the 3-point attempts distribution, which indicates that about half of the field goal attempts are 3-pointers.
 
 
+## +/- value in regular season and playoffs
+
 ```{r}
 regular <- read.csv("data/NBA_players_2023-2024csv.csv")
 playoffs <- read.csv("data/NBA_players_playoffs_2023-2024csv.csv")
@@ -168,6 +170,9 @@ This graph shows the distribution of NBA players' "+/-" value. This attribute me
 Analysis: The distribution for regular season is narrower with a higher peak, which indicates that most values are concentrated within a smaller range, and most value lie around 0. Moreover the distribution is right-skewed. The data for regular season is mostly confined between -5 and 10. The distribution for playoff season is wider with a lower peak, which indicates that data is more dispersed. The playoff data also have the peak near 0, but the distribution is less concentrated and left-skewed. Its wider distribution indicates that values can be more extreme in both positive and negative directions. The data for playoff season has a broader range, from -15 to 10.
 
 Possible Interpretations: The distribution for both regular and playoff season show that most players on average have a “+/-” value around 0. This indicates that, on average, most players have a neutral impact on their team’s scoring margin when they are on the court. The regular season data distribution may indicate that games are less intense, therefore player have similar "+/-" value rather than many extreme value. The difference among players is small. The Playoff season data distribution may indicate games are more competitive, since the difference among players are larger. It also shows some players play very well while others struggle against other team, which can give us more insight about the differences in player performance levels.
+
+
+## Regular season vs Playoff Season
 
 ```{r}
 #| message: false
@@ -218,6 +223,8 @@ Assists (AST), Rebounds (REB), Blocks (BLK), and Steals (STL): These features sh
 
 Free Throw Percentage (FT.) Regular Season shows higher Free Throw Percentage (FT.). Free throws really require precision, focus, and mental stability under pressure.Therefore, this difference is more intuitive to show that playoffs game is more intense and players are under more stressed and are more tired.
 
+
+## West Conference vs East Conference
 
 ```{r}
 regular <- read.csv("data/NBA_team_2023-2024csv.csv")
@@ -283,35 +290,51 @@ ggplot(plot_data, aes(Region, y = Value, fill = Region)) +
   )
 ```
 This graph show a comparison between teams in West and teams in East.
+
 1. Wins and Losses (W, L):
 
-	Wins (W):
-	The West shows a higher median for wins, which indicates west teams has stronger performance overall.
+Wins (W):
 
+The West shows a higher median for wins, which indicates west teams has stronger performance overall.
 
 2. Offence features:
 
-	Points (PTS):
-	Teams from the Western Conference tend to score more points on average, since the median is high. Moreover, for the east team, they have a larger spread for points scored. This may show that most west teams focus more on getting more points, while some of east teams get less points on average, either showed they are slight worse or they focus more on defense. 
-	Field Goal Percentage (FG.):
-	The Western Conference also has a slightly higher FG%, which indicate they have a better shooting efficiency. However, the west teams have larger spread in this feature, which showed that west teams performance is quite different. Moreover, there is an outlier in the east, which may indicate there is a really good team in the east which has large performance gap between itself and other east teams.
-	Three-Point Shooting (X3P., X3PA, X3PM):
-	The East shows higher medians for three-point attempts (X3PA) but makes similar (X3PM). This suggests that although East teams rely more on three-point shooting, they are not that efficient compared to the West. The three-point percentage (X3P.) is slightly higher in the West. This mean the West is more efficient in three-point but the East often attempt more three-point.
-	Assists:
-	It shows generally West team has more assits in one game, which shows they may have more pass in the game. This result is consistent with turnovers (TOV).
-	Free throw (FT., FTA, FTM)
-	The graph shows that the difference of free throw percentage (FT.) is quite similar, but West has more free throw made (FTM) and free threo attempt (FTA). This may indicate that West teams has the style which is more physical.
-	Other features like offensive rebound (OREB), shows similar stats.
+Points (PTS):
+
+Teams from the Western Conference tend to score more points on average, since the median is high. Moreover, for the east team, they have a larger spread for points scored. This may show that most west teams focus more on getting more points, while some of east teams get less points on average, either showed they are slight worse or they focus more on defense. 
+
+Field Goal Percentage (FG.):
+
+The Western Conference also has a slightly higher FG%, which indicate they have a better shooting efficiency. However, the west teams have larger spread in this feature, which showed that west teams performance is quite different. Moreover, there is an outlier in the east, which may indicate there is a really good team in the east which has large performance gap between itself and other east teams.
+
+Three-Point Shooting (X3P., X3PA, X3PM):
+
+The East shows higher medians for three-point attempts (X3PA) but makes similar (X3PM). This suggests that although East teams rely more on three-point shooting, they are not that efficient compared to the West. The three-point percentage (X3P.) is slightly higher in the West. This mean the West is more efficient in three-point but the East often attempt more three-point.
+
+Assists:
+
+It shows generally West team has more assits in one game, which shows they may have more pass in the game. This result is consistent with turnovers (TOV).
+
+Free throw (FT., FTA, FTM)
+
+The graph shows that the difference of free throw percentage (FT.) is quite similar, but West has more free throw made (FTM) and free threo attempt (FTA). This may indicate that West teams has the style which is more physical.
+
+Other features like offensive rebound (OREB), shows similar stats.
 
 3. Defense with significant features (TOV, DREB):
 
-  Turnovers (TOV):
-	The East has slightly fewer turnovers on average, which may indicate the East teams are more conservative while the West team has more pass which leads more turnovers.
-  Defensive Rebounds (DREB):
-	The west has significantly more defensive rebound, which may show that west team generally has better defence.
+Turnovers (TOV):
 
+The East has slightly fewer turnovers on average, which may indicate the East teams are more conservative while the West team has more pass which leads more turnovers.
+
+Defensive Rebounds (DREB):
+
+The west has significantly more defensive rebound, which may show that west team generally has better defence.
 
 In conclusion, the west team generally show a better offence and defence, which make them stronger than east teams overall. However, we can see there some outliers in East graph, which indicates there may be a very strong team in East.
+
+## Core players performance and team winning analysis
+
 ```{r}
 regular_player <- read.csv("data/NBA_players_2023-2024csv.csv")
 regular <- read.csv("data/NBA_team_2023-2024csv.csv")
@@ -372,6 +395,9 @@ In this graph, I first found two players of each team who have the top 2 fantast
 
 2. analysis
 It showed that generally, these two stats are positive correlated. This kind of makes sense since if their core players are better, their team tends to be better. However, we know that basketball is team sports. so there are some teams that has high fantasy points of their core players, but other player may not have a big role, which cannot make team win.
+
+## Team Style Analysis
+
 ```{r}
 # 筛选需要的变量
 selected_team_data <- team_data %>%
@@ -405,17 +431,23 @@ ggplot(pca_team_scores, aes(x = PC1, y = PC2)) +
   ) +
   theme_minimal()
 ```
-	1.	Principal Components:
-	PC1 (x-axis): It reflects more about offensive metrics such as Points (PTS), Assists (AST), three-point made (X3PM), and Field Goal Attempts (FGA), because these variables have strong positive loadings along this axis.
-	PC2 (y-axis): It reflects more about by Turnovers (TOV), Steals (STL), and Free Throw Attempt (FTA).
-	
-	2.	Team-Specific Insights:
-	This graph can help us know what is the style of each team and whether these teams are good or not. Here are some teams with specific styles.
-	GSW (Golden State Warriors):
-	The team lies at the top-left quadrant. GSW aligns with Three-Point Attempts (X3PA) and Turnovers (TOV), which may indicate their high-risk but high-reward offensive strategy and they mainly do the offence by three-point shooting.
-	PHI (Philadelphia 76ers):
-	It is at the bottom-right quadrant. PHI aligns with Free Throw Attempt(FTA), Steal (STL), which may indicate they focus on defense and play very physically to get free throws.
-	OKC (Oklahoma City Thunder):
-  It is at the bottom-left quadrant. OKC has a more balanced style with lower reliance on three-point shooting and turnovers. Moreover It points (PTS), assists (AST), and steal (STL) are all quite high, which means they are good on both deffense and offence.
-	CHA and POR:
-	They are at the top of the chart, these teams tend to have more turnovers and less points. This may indicate they have poor performance this season.
+1. Principal Components:
+
+PC1 (x-axis): It reflects more about offensive metrics such as Points (PTS), Assists (AST), three-point made (X3PM), and Field Goal Attempts (FGA), because these variables have strong positive loadings along this axis.
+PC2 (y-axis): It reflects more about by Turnovers (TOV), Steals (STL), and Free Throw Attempt (FTA).
+
+2. Team-Specific Insights:
+
+This graph can help us know what is the style of each team and whether these teams are good or not. Here are some teams with specific styles.
+
+GSW (Golden State Warriors):
+The team lies at the top-left quadrant. GSW aligns with Three-Point Attempts (X3PA) and Turnovers (TOV), which may indicate their high-risk but high-reward offensive strategy and they mainly do the offence by three-point shooting.
+
+PHI (Philadelphia 76ers):
+It is at the bottom-right quadrant. PHI aligns with Free Throw Attempt(FTA), Steal (STL), which may indicate they focus on defense and play very physically to get free throws.
+
+OKC (Oklahoma City Thunder):
+It is at the bottom-left quadrant. OKC has a more balanced style with lower reliance on three-point shooting and turnovers. Moreover It points (PTS), assists (AST), and steal (STL) are all quite high, which means they are good on both deffense and offence.
+
+CHA and POR:
+They are at the top of the chart, these teams tend to have more turnovers and less points. This may indicate they have poor performance this season.
