@@ -42,7 +42,9 @@ plot_ly(
     )
 ```
 Fantasy point is a measurement of a player's value during a single game. From the team win rate correlation analysis, we saw that 3-point accuracy and field goal accuracy have a positive correlation with team win rate. Then two questions come to us: on a personal level, how much do average 3-points made and field goals made correlate to the average fantasy points of the players; do 3-points made and field goals made positively correlate with one another?
+
 We can first observe that 3-points made and field goals made weakly positively correlate. Moreover, the data show a triangular shape, where there are many players who have high field goals made but low 3-points made. This result is intuitive as many of these players are power forward and center players. Moreover, it also makes sense that none of the players have high 3-points made but low field goals made. This is why the distribution is triangular.
+
 We can also observe that field goals made have an extremely strong correlation with fantasy points, which is likely due to points made being a key factor in fantasy points. The data distribution of 3-points made against fantasy points, on the other hand, is more interesting. It is weakly positively correlated. The data distribution is triangular, where many players have lower 3-points made while having high fantasy points, such as Embiid and Jokic, which shows that making 3-point shots is not deterministic in fantasy points. However, on the other hand, none of the high 3-point makers are ranked low in fantasy points, as we can observe from the plot. Without observing that none of the players have high 3-points made with low field goals made, we might speculate that the fantasy point system is in favor of 3-point makers to some degree. Now we know that none of the high 3-point makers are ranked low in fantasy points, likely due to the fact that none of the players have high 3-points made with low field goals made.
 
 ## Teams’ Player Performance Analysis
@@ -84,7 +86,9 @@ ggplot(players_with_wins, aes(x = Team, y = PTS)) +
 ```
 
 We know that the most important reason for a team to win is for the team to score points. We made a points distribution plot for all teams, ranked from the highest win rate to the lowest win rate.
+
 We initially suspected that there might be a pattern in the distribution of points earned per player for high win rate teams, such as having a higher upper quantile, more outliers, or higher outlier points (star players). However, none of these patterns were found. Distributions differ across teams, but points distribution statistics don’t seem to show a general trend for high win rate or low win rate teams.
+
 However, there is another interesting fact found in this plot: teams either have a high upper bound or high outlier data. The players with the most points on the team earn twice as many points as 75 percent of the players on the team. While this can be due to some players being benched for most of the time, it still raises the question: do some players attempt much more shots than other players? This is what we will discover with the next plot.
 
 
@@ -112,7 +116,9 @@ ggplot(players, aes(x = FGA / Min)) +
 ```
 
 From the distribution of field goals attempted per minute for all players, we can answer the question: do some players attempt much more shots than other players? The answer is likely yes. We can see that the distribution is slightly right-skewed for field goals attempted, which indicates that some players are attempting more shots per minute than others.
+
 For the 3-point attempts per minute, we can see that the distribution is bimodal, with one peak close to 0 and another peak around 0.125. My speculation is that some players, such as power forwards and centers, have fewer opportunities to shoot 3-pointers.
+
 Overall, it is also interesting to observe that the peak of the field goal attempts distribution is only about twice the peak of the 3-point attempts distribution, which indicates that about half of the field goal attempts are 3-pointers.
 
 
